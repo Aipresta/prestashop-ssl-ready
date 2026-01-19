@@ -16,9 +16,5 @@ RUN apt-get update && apt-get install -y default-mysql-client curl && rm -rf /va
 COPY report-admin-folder.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/report-admin-folder.sh
 
-# Run reporting script in background on startup
-RUN echo '#!/bin/bash\n/usr/local/bin/report-admin-folder.sh &\nexec "$@"' > /usr/local/bin/startup-wrapper.sh && \
-    chmod +x /usr/local/bin/startup-wrapper.sh
-
-ENTRYPOINT ["/usr/local/bin/startup-wrapper.sh"]
-CMD ["apache2-foreground"]
+# Override CMD to run reporter in background
+CMD /usr/local/bin/report-admin-folder.sh & apache2-foreground
