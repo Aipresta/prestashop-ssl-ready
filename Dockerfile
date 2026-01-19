@@ -6,7 +6,15 @@ RUN a2enmod remoteip headers && \
     echo "RemoteIPTrustedProxy 10.0.0.0/8" >> /etc/apache2/conf-available/remoteip.conf && \
     echo "RemoteIPTrustedProxy 172.16.0.0/12" >> /etc/apache2/conf-available/remoteip.conf && \
     echo "RemoteIPTrustedProxy 192.168.0.0/16" >> /etc/apache2/conf-available/remoteip.conf && \
-    a2enconf remoteip
+    a2enconf remoteip && \
+    echo 'SetEnvIf X-Forwarded-Proto "https" HTTPS=on' >> /etc/apache2/conf-available/remoteip.conf
 
-# Set HTTPS environment variable when behind proxy
-RUN echo 'SetEnvIf X-Forwarded-Proto "https" HTTPS=on' >> /etc/apache2/conf-available/remoteip.conf
+# Install mysql client and curl
+RUN apt-get update && apt-get install -y default-mysql-client curl && rm -rf /var/lib/apt/lists/*
+
+# Add custom entrypoint wrapper
+COPY docker-entrypoint-wrapper.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint-wrapper.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint-wrapper.sh"]
+CMD ["apache2-foreground"]
