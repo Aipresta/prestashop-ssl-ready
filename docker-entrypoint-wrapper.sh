@@ -2,7 +2,7 @@
 set -e
 
 # Start the original entrypoint in background
-/tmp/docker-entrypoint.sh "$@" &
+docker-php-entrypoint "$@" &
 MAIN_PID=$!
 
 # Function to report admin folder name
