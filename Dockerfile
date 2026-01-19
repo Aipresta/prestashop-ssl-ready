@@ -9,12 +9,16 @@ RUN a2enmod remoteip headers && \
     a2enconf remoteip && \
     echo 'SetEnvIf X-Forwarded-Proto "https" HTTPS=on' >> /etc/apache2/conf-available/remoteip.conf
 
-# Install mysql client and curl
+# Install mysql client and curl for reporting
 RUN apt-get update && apt-get install -y default-mysql-client curl && rm -rf /var/lib/apt/lists/*
 
-# Add custom entrypoint wrapper
-COPY docker-entrypoint-wrapper.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint-wrapper.sh
+# Add reporting script
+COPY report-admin-folder.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/report-admin-folder.sh
 
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint-wrapper.sh"]
+# Run reporting script in background on startup
+RUN echo '#!/bin/bash\n/usr/local/bin/report-admin-folder.sh &\nexec "$@"' > /usr/local/bin/startup-wrapper.sh && \
+    chmod +x /usr/local/bin/startup-wrapper.sh
+
+ENTRYPOINT ["/usr/local/bin/startup-wrapper.sh"]
 CMD ["apache2-foreground"]
