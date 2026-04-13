@@ -1,9 +1,8 @@
 name: Build and Push Docker Image
-
 on:
   push:
     branches:
-      - main
+      - PS82
 
 jobs:
   build:
@@ -29,5 +28,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/aipresta/prestashop-ssl-ready:latest
+            ghcr.io/aipresta/prestashop-ssl-ready:PS82
             ghcr.io/aipresta/prestashop-ssl-ready:${{ github.sha }}
