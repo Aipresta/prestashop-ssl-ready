@@ -9,6 +9,6 @@ PrestaShop 9 with reverse proxy support pre-configured for use behind Coolify/Tr
 
 ## Usage
 ```yaml
-image: ghcr.io/aipresta/prestashop-ssl-ready:latest
+image: ghcr.io/aipresta/prestashop-ssl-ready:PS8
 ```
 MIT License - it's the most permissive and common
