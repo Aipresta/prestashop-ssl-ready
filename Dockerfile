@@ -1,4 +1,4 @@
-FROM prestashop/prestashop:9.1.4-apache
+FROM prestashop/prestashop:9.2.0-apache
 
 # Configure Apache for reverse proxy
 RUN a2enmod remoteip headers && \

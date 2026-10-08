@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - ps-9.2
 
 jobs:
   build:
@@ -22,7 +23,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Build and push Docker image
+      # main publishes latest/main (the 9.1.x images every current store uses); ps-9.2 publishes only its own
+      # version tag (9.2.0), never latest: nothing that runs today changes.
+      - name: Build and push Docker image (main)
+        if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -30,4 +34,14 @@ jobs:
           tags: |
             ghcr.io/aipresta/prestashop-ssl-ready:latest
             ghcr.io/aipresta/prestashop-ssl-ready:main
+            ghcr.io/aipresta/prestashop-ssl-ready:${{ github.sha }}
+
+      - name: Build and push Docker image (ps-9.2)
+        if: github.ref == 'refs/heads/ps-9.2'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/aipresta/prestashop-ssl-ready:9.2.0
             ghcr.io/aipresta/prestashop-ssl-ready:${{ github.sha }}
